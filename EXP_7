@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+char production[10][20];
+char first[20];
+int n, m = 0;
+
+void findFirst(char c)
+{
+    int i, j;
+
+    if (!isupper(c))
+    {
+        first[m++] = c;
+        return;
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        if (production[i][0] == c)
+        {
+            if (production[i][3] == '#')
+                first[m++] = '#';
+            else
+                findFirst(production[i][3]);
+        }
+    }
+}
+
+int main()
+{
+    int i;
+
+    printf("Enter number of productions: ");
+    scanf("%d", &n);
+
+    printf("Use # for epsilon\n");
+
+    for(i=0;i<n;i++)
+        scanf("%s",production[i]);
+
+    char ch;
+    printf("Enter Non-terminal: ");
+    scanf(" %c",&ch);
+
+    findFirst(ch);
+
+    printf("FIRST(%c) = { ",ch);
+
+    for(i=0;i<m;i++)
+        printf("%c ",first[i]);
+
+    printf("}");
+
+    return 0;
+}
+
+#Input
+3
+S=AaAb
+A=#
+B=#
+S

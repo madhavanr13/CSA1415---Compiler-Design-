@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char grammar[10][20];
+char trailing[26][20];
+int n;
+
+void add(char nt, char c)
+{
+    int i = nt - 'A';
+
+    for (int j = 0; trailing[i][j] != '\0'; j++)
+    {
+        if (trailing[i][j] == c)
+            return;
+    }
+
+    int len = strlen(trailing[i]);
+    trailing[i][len] = c;
+    trailing[i][len + 1] = '\0';
+}
+
+void findTrailing(char nt)
+{
+    int i, j;
+
+    for (i = 0; i < n; i++)
+    {
+        if (grammar[i][0] != nt)
+            continue;
+
+        j = 3;
+
+        int len = strlen(grammar[i]);
+
+        if (!isupper(grammar[i][len - 1]))
+        {
+            add(nt, grammar[i][len - 1]);
+        }
+        else
+        {
+            char next = grammar[i][len - 1];
+
+            findTrailing(next);
+
+            int index = next - 'A';
+
+            for (int k = 0; trailing[index][k] != '\0'; k++)
+                add(nt, trailing[index][k]);
+
+            if (len >= 2 && !isupper(grammar[i][len - 2]))
+                add(nt, grammar[i][len - 2]);
+        }
+    }
+}
+
+int main()
+{
+    printf("Enter number of productions: ");
+    scanf("%d", &n);
+
+    printf("Enter productions without spaces:\n");
+
+    for (int i = 0; i < n; i++)
+        scanf("%s", grammar[i]);
+
+    findTrailing('E');
+    findTrailing('T');
+    findTrailing('F');
+
+    printf("\nTRAILING sets:\n");
+
+    for (int i = 0; i < 26; i++)
+    {
+        if (strlen(trailing[i]) > 0)
+        {
+            printf("TRAILING(%c) = { ", 'A' + i);
+
+            for (int j = 0; trailing[i][j] != '\0'; j++)
+                printf("%c ", trailing[i][j]);
+
+            printf("}\n");
+        }
+    }
+
+    return 0;
+}

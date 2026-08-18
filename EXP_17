@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char prod[20][30];
+int n;
+
+char leading[26][30];
+int visited[26];
+
+void addLeading(char nt, char ch)
+{
+    int index = nt - 'A';
+    int i;
+
+    for (i = 0; leading[index][i] != '\0'; i++)
+    {
+        if (leading[index][i] == ch)
+            return;
+    }
+
+    leading[index][i] = ch;
+    leading[index][i + 1] = '\0';
+}
+
+void findLeading(char nt)
+{
+    int i, j;
+    int index = nt - 'A';
+
+    if (visited[index])
+        return;
+
+    visited[index] = 1;
+
+    for (i = 0; i < n; i++)
+    {
+        if (prod[i][0] != nt)
+            continue;
+
+        /* Skip E -> E, T -> T type left recursion */
+        j = 2;
+
+        if (prod[i][j] == '=')
+            j++;
+
+        /* If first symbol is terminal */
+        if (!isupper(prod[i][j]))
+        {
+            addLeading(nt, prod[i][j]);
+        }
+        else
+        {
+            char next = prod[i][j];
+
+            /* Avoid direct left recursion */
+            if (next != nt)
+            {
+                findLeading(next);
+
+                int nextIndex = next - 'A';
+
+                for (int k = 0; leading[nextIndex][k] != '\0'; k++)
+                {
+                    addLeading(nt, leading[nextIndex][k]);
+                }
+
+                /*
+                 * If grammar is of the form A -> B a,
+                 * 'a' is also in LEADING(A)
+                 */
+                if (prod[i][j + 1] != '\0' &&
+                    !isupper(prod[i][j + 1]))
+                {
+                    addLeading(nt, prod[i][j + 1]);
+                }
+            }
+        }
+    }
+}
+
+int main()
+{
+    int i, j;
+
+    printf("Enter number of productions: ");
+    scanf("%d", &n);
+
+    printf("Enter productions without spaces:\n");
+
+    for (i = 0; i < n; i++)
+    {
+        scanf("%s", prod[i]);
+    }
+
+    findLeading('E');
+    findLeading('T');
+    findLeading('F');
+
+    printf("\nLEADING sets:\n");
+
+    for (i = 0; i < 26; i++)
+    {
+        if (strlen(leading[i]) > 0)
+        {
+            printf("LEADING(%c) = { ", 'A' + i);
+
+            for (j = 0; leading[i][j] != '\0'; j++)
+            {
+                printf("%c ", leading[i][j]);
+            }
+
+            printf("}\n");
+        }
+#input:
+E=E+T
+E=T
+T=T*F
+T=F
+F=(E)
+F=i
+    }
+
+    return 0;
+}

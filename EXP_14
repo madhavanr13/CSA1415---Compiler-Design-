@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char stack[100][20];
+int top = -1;
+int temp = 1;
+
+int precedence(char op)
+{
+    if (op == '+' || op == '-')
+        return 1;
+
+    if (op == '*' || op == '/')
+        return 2;
+
+    return 0;
+}
+
+void push(char str[])
+{
+    strcpy(stack[++top], str);
+}
+
+char *pop()
+{
+    return stack[top--];
+}
+
+void generate(char op)
+{
+    char a[20], b[20], result[20];
+
+    strcpy(b, pop());
+    strcpy(a, pop());
+
+    sprintf(result, "t%d", temp);
+
+    printf("%s = %s %c %s\n", result, a, op, b);
+
+    push(result);
+
+    temp++;
+}
+
+int main()
+{
+    char expression[100];
+    char operators[100];
+    int optop = -1;
+    int i;
+
+    printf("Enter expression: ");
+    scanf("%s", expression);
+
+    for (i = 0; expression[i] != '\0'; i++)
+    {
+        char ch = expression[i];
+
+        if (isalnum(ch))
+        {
+            char operand[2];
+
+            operand[0] = ch;
+            operand[1] = '\0';
+
+            push(operand);
+        }
+        else if (ch == '(')
+        {
+            operators[++optop] = ch;
+        }
+        else if (ch == ')')
+        {
+            while (optop >= 0 && operators[optop] != '(')
+            {
+                generate(operators[optop--]);
+            }
+
+            optop--;
+        }
+        else
+        {
+            while (optop >= 0 &&
+                   operators[optop] != '(' &&
+                   precedence(operators[optop]) >= precedence(ch))
+            {
+                generate(operators[optop--]);
+            }
+
+            operators[++optop] = ch;
+        }
+    }
+
+    while (optop >= 0)
+    {
+        generate(operators[optop--]);
+    }
+
+    return 0;
+}
+#input:a+b*c

@@ -1,0 +1,44 @@
+#include<stdio.h>
+#include<string.h>
+
+struct Symbol
+{
+    char name[20];
+    char type[20];
+    int address;
+};
+
+int main()
+{
+    struct Symbol s[20];
+    int n,i;
+
+    printf("Enter number of identifiers: ");
+    scanf("%d",&n);
+
+    for(i=0;i<n;i++)
+    {
+        printf("\nIdentifier Name: ");
+        scanf("%s",s[i].name);
+
+        printf("Data Type: ");
+        scanf("%s",s[i].type);
+
+        s[i].address=1000+i;
+    }
+
+    printf("\nName\tType\tAddress\n");
+
+    for(i=0;i<n;i++)
+        printf("%s\t%s\t%d\n",s[i].name,s[i].type,s[i].address);
+
+    return 0;
+}
+#Input
+3
+a
+int
+b
+float
+c
+char

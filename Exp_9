@@ -1,0 +1,34 @@
+#include<stdio.h>
+#include<string.h>
+
+int main()
+{
+    char lhs,rhs[50];
+
+    printf("Enter Production (Example A=Aa|b): ");
+    scanf("%c=%s",&lhs,rhs);
+
+    if(lhs==rhs[0])
+    {
+        printf("\nAfter Removing Left Recursion\n");
+
+        printf("%c -> ",lhs);
+
+        int i=0;
+        while(rhs[i]!='|') i++;
+
+        printf("%s%c'\n",&rhs[i+1],lhs);
+
+        printf("%c' -> ",lhs);
+
+        for(i=1;rhs[i]!='|';i++)
+            printf("%c",rhs[i]);
+
+        printf("%c' | #",lhs);
+    }
+#Input:L=L,S|S
+    else
+        printf("No Left Recursion");
+
+    return 0;
+}
